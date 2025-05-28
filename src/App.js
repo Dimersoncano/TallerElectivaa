@@ -2,31 +2,41 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
-  const [products, setProducts] = useState([]);
+  const [productos, setProductos] = useState([]);
+
+  // Consumir API de Platzi
+  const cargarProductos = async () => {
+    try {
+      const respuesta = await fetch('https://api.escuelajs.co/api/v1/products');
+      const datos = await respuesta.json();
+      setProductos(datos.slice(0, 10)); // Solo los primeros 10
+    } catch (error) {
+      console.error('Hubo un error al obtener los productos:', error);
+    }
+  };
 
   useEffect(() => {
-    fetch('https://api.escuelajs.co/api/v1/products')
-      .then(res => res.json())
-      .then(data => setProducts(data.slice(0, 10))) // Muestra solo los 10 primeros
-      .catch(error => console.error('Error al cargar productos:', error));
+    cargarProductos();
   }, []);
 
   return (
     <div className="App">
-      <h1>Productos de la API Platzi</h1>
-      <div className="product-list">
-        {products.map(product => (
-          <div key={product.id} className="product-card">
-            <img src={product.images[0]} alt={product.title} />
-            <h2>{product.title}</h2>
-            <p>${product.price}</p>
-            <p>{product.description}</p>
-          </div>
+      <h1 style={{ color: '#2c3e50' }}>Catálogo de Eliecer Gómez</h1>
+      <section className="lista-productos">
+        {productos.map((item) => (
+          <article key={item.id} className="tarjeta-producto">
+            <img src={item.images[0]} alt={item.title} width="100%" />
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            <strong>Precio: ${item.price}</strong>
+          </article>
         ))}
-      </div>
+      </section>
     </div>
   );
 }
 
 export default App;
+
+
 
